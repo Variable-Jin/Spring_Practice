@@ -42,7 +42,7 @@ public class ArticleController {
         Article saved = articleRepository.save(article);   // 2.
         log.info(saved.toString());
 //        System.out.println(saved.toString());        article이 DB에 저장되는지 확인 출력
-        return "";
+        return "redirect:/articles/" + saved.getId();
     }
 
     @GetMapping("/articles/{id}")       // article url에서 {id} 조회 요청
@@ -57,8 +57,8 @@ public class ArticleController {
          * 2) 모델에 데이터 등록
          * 3) 뷰 페이지 반환
          */
-       Article article = articleRepository.findById(id).orElse(null);       // 1.
-        model.addAttribute("article", article);                       // 2.
+       Article articleEntity = articleRepository.findById(id).orElse(null);       // 1.
+        model.addAttribute("article", articleEntity);                       // 2.
         return "articles/show";                                                   // 3.
     }
 
@@ -72,6 +72,13 @@ public class ArticleController {
         List<Article> articleList = articleRepository.findAll();                // 1.
         model.addAttribute("articleList", articleList);             // 2.
         return "articles/index";                                                // 3.
+    }
+
+    @GetMapping("/articles/{id}/edit")
+    public String edit(@PathVariable Long id, Model model) {                   // 2. @PathVariable 이용해서 id를 매개변수로 가져오기
+        Article articleEntity = articleRepository.findById(id).orElse(null);   // 1. DB에서 수정할 데이터 가져오기
+        model.addAttribute("article", articleEntity);
+        return "articles/edit";
     }
 
 }
