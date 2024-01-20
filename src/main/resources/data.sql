@@ -1,3 +1,3 @@
-insert into article(id, title, content) values (1, '은하철도', '999');
-insert into article(id, title, content) values (2, '마바사아', '9012');
-insert into article(id, title, content) values (3, '자차카타', '3456');
+insert into article(title, content) values ('은하철도', '999');
+insert into article(title, content) values ('오늘의 일기', '카페를 두 군데나 다녀왔다 ^3^');
+insert into article(title, content) values ('오늘의 저녁메뉴', '바삭한 치킨');

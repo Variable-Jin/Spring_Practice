@@ -12,9 +12,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Slf4j      // 로깅 기능 위한 어노테이션
 @Controller
@@ -80,5 +83,39 @@ public class ArticleController {
         model.addAttribute("article", articleEntity);
         return "articles/edit";
     }
+
+    @PostMapping("/articles/update")
+    public String update(ArticleForm articleForm) {             // DTO 매개변수로 받기
+        Article articleEntity = articleForm.toEntity();         // 1. DTO → Entity로 변환
+        log.info(articleForm.toString());
+        /**
+         * 2. 엔티티를 DB에 저장하기
+         * 2-1) DB에서 기존 데이터 가져오기
+         * 2-2) 기존 데이터 값 갱신 (Entity DB 저장)
+         */
+        Article target = articleRepository.findById(articleEntity.getId()).orElse(null);    // 2-1)
+        if (target != null) {                                                                    // 2-2)
+            articleRepository.save(articleEntity);
+        }
+        return "redirect:/articles/" + articleEntity.getId();
+    }
+
+    @GetMapping("/articles/{id}/delete")
+    public String delete(@PathVariable Long id, RedirectAttributes rttr) {
+        log.info("삭제 요청이 들어왔습니다.");
+        /**
+         * 1. 삭제 대상 가져오기
+         * 2. 대상 엔티티 삭제
+         * 3. 결과 페이지 리다이렉트
+         */
+        Article target = articleRepository.findById(id).orElse(null);       // 1.
+        log.info(target.toString());
+        if (target != null) {                                                     // 2.
+            articleRepository.delete(target);
+            rttr.addFlashAttribute("msg", "삭제됐습니다!");
+        }
+        return "redirect:/articles";                                              // 3.
+    }
+
 
 }
