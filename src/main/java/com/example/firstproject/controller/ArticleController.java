@@ -2,8 +2,11 @@ package com.example.firstproject.controller;
 
 
 import com.example.firstproject.dto.ArticleForm;
+import com.example.firstproject.dto.CommentDto;
 import com.example.firstproject.entity.Article;
 import com.example.firstproject.repository.ArticleRepository;
+import com.example.firstproject.service.ArticleService;
+import com.example.firstproject.service.CommentService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,8 @@ public class ArticleController {
 
     @Autowired
     private ArticleRepository articleRepository;
+    @Autowired
+    private CommentService commentService;
 
     @GetMapping("/articles/new")
     public String newArticleForm() {
@@ -61,7 +66,9 @@ public class ArticleController {
          * 3) 뷰 페이지 반환
          */
        Article articleEntity = articleRepository.findById(id).orElse(null);       // 1.
+        List<CommentDto> commentsDtos = commentService.comments(id);
         model.addAttribute("article", articleEntity);                       // 2.
+        model.addAttribute("commentDtos", commentsDtos);      // comment 목록 model 등록
         return "articles/show";                                                   // 3.
     }
 
